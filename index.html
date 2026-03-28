@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OAK — Architecture & Interior Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --charcoal: #141414;
+    --dark: #1c1c1c;
+    --mid: #2a2a2a;
+    --border: #2e2e2e;
+    --muted: #5a5a5a;
+    --light: #aaa;
+    --off-white: #e8e4dc;
+    --white: #f5f2ec;
+    --gold: #b8965a;
+    --gold-light: #d4af7a;
+    --gold-dim: rgba(184,150,90,0.15);
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Raleway', sans-serif;
+  }
+
+  /* ── TAN (LUXURY LIGHT) THEME ── */
+  body.theme-tan {
+    --black: #f0e8d8;
+    --charcoal: #e8dece;
+    --dark: #ddd3c0;
+    --mid: #cfc4ae;
+    --border: #c4b89e;
+    --muted: #8a7d68;
+    --light: #5c5040;
+    --off-white: #2a2018;
+    --white: #1a1208;
+    --gold: #8a6530;
+    --gold-light: #a07840;
+    --gold-dim: rgba(138,101,48,0.12);
+  }
+  body.theme-tan ::-webkit-scrollbar-track { background: #f0e8d8; }
+  body.theme-tan .hero-bg {
+    background:
+      linear-gradient(160deg, rgba(240,232,216,0.25) 0%, rgba(240,232,216,0.6) 60%, rgba(240,232,216,0.92) 100%),
+      url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1800&q=80') center/cover no-repeat;
+  }
+  body.theme-tan nav::before {
+    background: linear-gradient(to bottom, rgba(240,232,216,0.92) 0%, transparent 100%);
+  }
+  body.theme-tan .philosophy::before { color: rgba(0,0,0,0.04); }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    position: fixed;
+    bottom: 36px;
+    right: 36px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--gold);
+    background: var(--black);
+    overflow: hidden;
+    transition: background 0.5s, border-color 0.5s;
+  }
+  .theme-btn {
+    padding: 11px 18px;
+    font-family: var(--sans);
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    cursor: none;
+    transition: color 0.3s, background 0.3s;
+    position: relative;
+  }
+  .theme-btn.active {
+    background: var(--gold);
+    color: var(--black);
+  }
+  .theme-btn:not(.active):hover { color: var(--gold); }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--off-white);
+    font-family: var(--sans);
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    left: -100px; top: -100px;
+    transform: translate(-50%,-50%);
+    transition: width 0.3s, height 0.3s, background 0.3s;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(184,150,90,0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    left: -100px; top: -100px;
+    transform: translate(-50%,-50%);
+    transition: width 0.3s, height 0.3s;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 2px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 28px 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    mix-blend-mode: normal;
+  }
+  nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.9) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    color: var(--white);
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-links a {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--light);
+    text-decoration: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--gold);
+    transition: width 0.35s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* HERO */
+  .hero {
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(160deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.7) 60%, rgba(10,10,10,0.95) 100%),
+      url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1800&q=80') center/cover no-repeat;
+    transform: scale(1.05);
+    animation: heroReveal 2.2s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  @keyframes heroReveal {
+    from { transform: scale(1.12); opacity: 0; }
+    to { transform: scale(1.05); opacity: 1; }
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 56px 80px;
+    max-width: 800px;
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards 0.8s;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-eyebrow {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--gold);
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(60px, 9vw, 120px);
+    font-weight: 300;
+    line-height: 0.9;
+    color: var(--white);
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold-light);
+    font-weight: 300;
+  }
+  .hero-desc {
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--light);
+    line-height: 1.8;
+    max-width: 420px;
+    margin-bottom: 48px;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    border: 1px solid var(--gold);
+    padding: 16px 32px;
+    transition: background 0.3s, color 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: translateX(-101%);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .hero-cta:hover::before { transform: translateX(0); }
+  .hero-cta:hover { color: var(--black); }
+  .hero-cta span { position: relative; z-index: 1; }
+  .hero-cta-arrow { position: relative; z-index: 1; font-size: 18px; }
+
+  /* SCROLL INDICATOR */
+  .scroll-indicator {
+    position: absolute;
+    right: 56px;
+    bottom: 80px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.6s;
+  }
+  .scroll-indicator span {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+  @keyframes scrollPulse {
+    0%,100% { opacity: 0.4; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+  }
+
+  /* SECTION BASICS */
+  section { position: relative; }
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--gold);
+  }
+  .section-num {
+    font-family: var(--serif);
+    font-size: 11px;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+
+  /* ABOUT */
+  .about {
+    padding: 140px 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: center;
+    background: var(--charcoal);
+  }
+  .about-left { }
+  .about-heading {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 40px;
+  }
+  .about-heading em { font-style: italic; color: var(--gold-light); }
+  .about-text {
+    font-size: 14px;
+    line-height: 2;
+    color: var(--light);
+    margin-bottom: 24px;
+  }
+  .about-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 60px;
+    padding-top: 60px;
+    border-top: 1px solid var(--border);
+  }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .about-image {
+    position: relative;
+    height: 560px;
+  }
+  .about-img-main {
+    width: 85%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(20%) contrast(1.05);
+  }
+  .about-img-accent {
+    position: absolute;
+    bottom: -40px;
+    right: 0;
+    width: 55%;
+    height: 200px;
+    object-fit: cover;
+    border: 6px solid var(--charcoal);
+    filter: grayscale(10%);
+  }
+  .about-gold-line {
+    position: absolute;
+    top: 40px;
+    right: -20px;
+    width: 1px;
+    height: 200px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+  }
+
+  /* SERVICES */
+  .services {
+    padding: 140px 56px;
+    background: var(--black);
+  }
+  .services-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 80px;
+  }
+  .services-heading {
+    font-family: var(--serif);
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 300;
+    color: var(--white);
+    max-width: 400px;
+    line-height: 1.2;
+  }
+  .services-heading em { font-style: italic; color: var(--gold-light); }
+  .services-intro {
+    max-width: 320px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .service-item {
+    background: var(--black);
+    padding: 56px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+  }
+  .service-item::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    transform-origin: left;
+  }
+  .service-item:hover { background: var(--charcoal); }
+  .service-item:hover::before { transform: scaleX(1); }
+  .service-num {
+    font-family: var(--serif);
+    font-size: 64px;
+    font-weight: 300;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 32px;
+    transition: color 0.4s;
+  }
+  .service-item:hover .service-num { color: var(--gold-dim); }
+  .service-title {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+  .service-desc {
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .service-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .service-list li {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.3s;
+  }
+  .service-list li::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--gold);
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+  .service-item:hover .service-list li { color: var(--light); }
+
+  /* PROJECTS */
+  .projects {
+    padding: 140px 56px;
+    background: var(--charcoal);
+  }
+  .projects-header {
+    margin-bottom: 80px;
+  }
+  .projects-heading {
+    font-family: var(--serif);
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.1;
+  }
+  .projects-heading em { font-style: italic; color: var(--gold-light); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 20px;
+  }
+  .project-card {
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+  }
+  .project-card:first-child {
+    grid-row: span 2;
+  }
+  .project-img {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(25%) contrast(1.05);
+    transition: transform 0.9s cubic-bezier(0.16,1,0.3,1), filter 0.5s;
+  }
+  .project-card:first-child .project-img { min-height: 760px; }
+  .project-card:hover .project-img {
+    transform: scale(1.06);
+    filter: grayscale(0%) contrast(1.05);
+  }
+  .project-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.1) 50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 36px;
+    transition: background 0.4s;
+  }
+  .project-card:hover .project-overlay {
+    background: linear-gradient(to top, rgba(10,10,10,0.98) 0%, rgba(10,10,10,0.15) 50%);
+  }
+  .project-category {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .project-name {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .project-card:first-child .project-name { font-size: 38px; }
+  .project-location {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+  .project-arrow {
+    position: absolute;
+    top: 32px; right: 32px;
+    width: 44px; height: 44px;
+    border: 1px solid rgba(184,150,90,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 18px;
+    opacity: 0;
+    transform: translate(8px, -8px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .project-card:hover .project-arrow { opacity: 1; transform: translate(0,0); }
+  .projects-cta {
+    margin-top: 60px;
+    text-align: center;
+  }
+  .projects-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(184,150,90,0.3);
+    padding-bottom: 8px;
+    transition: border-color 0.3s;
+  }
+  .projects-link:hover { border-color: var(--gold); }
+
+  /* PHILOSOPHY */
+  .philosophy {
+    padding: 160px 56px;
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+  .philosophy::before {
+    content: 'OAK';
+    position: absolute;
+    font-family: var(--serif);
+    font-size: 320px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.02);
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    user-select: none;
+  }
+  .philosophy-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .philosophy-quote {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 52px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--white);
+    line-height: 1.4;
+    margin-bottom: 48px;
+  }
+  .philosophy-quote em {
+    color: var(--gold-light);
+    font-style: normal;
+  }
+  .philosophy-author {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .philosophy-author::before,
+  .philosophy-author::after {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--border);
+  }
+  .philosophy-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 120px;
+  }
+  .pillar {
+    background: var(--black);
+    padding: 60px 40px;
+    text-align: left;
+  }
+  .pillar-icon {
+    width: 32px; height: 32px;
+    margin-bottom: 32px;
+  }
+  .pillar-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+  .pillar-text {
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+
+  /* PROCESS */
+  .process {
+    padding: 140px 56px;
+    background: var(--charcoal);
+  }
+  .process-heading {
+    font-family: var(--serif);
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 80px;
+    line-height: 1.2;
+  }
+  .process-heading em { font-style: italic; color: var(--gold-light); }
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    position: relative;
+  }
+  .process-steps::before {
+    content: '';
+    position: absolute;
+    top: 28px; left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  .process-step {
+    padding: 0 32px 0 0;
+    position: relative;
+  }
+  .step-dot {
+    width: 12px; height: 12px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    background: var(--charcoal);
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+  }
+  .step-num {
+    font-family: var(--serif);
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 16px;
+  }
+  .step-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .step-desc {
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+
+  /* CONTACT */
+  .contact {
+    padding: 140px 56px;
+    background: var(--dark);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: start;
+  }
+  .contact-left { }
+  .contact-heading {
+    font-family: var(--serif);
+    font-size: clamp(36px, 4vw, 60px);
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 40px;
+  }
+  .contact-heading em { font-style: italic; color: var(--gold-light); }
+  .contact-text {
+    font-size: 14px;
+    line-height: 2;
+    color: var(--muted);
+    margin-bottom: 56px;
+  }
+  .contact-details { display: flex; flex-direction: column; gap: 32px; }
+  .contact-item-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .contact-item-value {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--white);
+  }
+  .contact-form { display: flex; flex-direction: column; gap: 0; }
+  .form-group {
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+    padding-bottom: 12px;
+    transition: border-color 0.3s;
+  }
+  .form-group:focus-within { border-color: var(--gold); }
+  .form-label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .form-input, .form-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--white);
+    resize: none;
+  }
+  .form-textarea { height: 80px; }
+  .form-input::placeholder, .form-textarea::placeholder { color: var(--border); }
+  .form-submit {
+    margin-top: 16px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 18px 48px;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.35s;
+    align-self: flex-start;
+  }
+  .form-submit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: translateX(-101%);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .form-submit:hover::before { transform: translateX(0); }
+  .form-submit:hover { color: var(--black); }
+  .form-submit span { position: relative; z-index: 1; }
+
+  /* FOOTER */
+  footer {
+    background: var(--black);
+    padding: 60px 56px 40px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 60px;
+  }
+  .footer-logo {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--white);
+  }
+  .footer-logo span { color: var(--gold); }
+  .footer-tagline {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .footer-nav { display: flex; gap: 80px; }
+  .footer-nav-col h4 {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .footer-nav-col ul { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .footer-nav-col a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+    letter-spacing: 0.05em;
+  }
+  .footer-nav-col a:hover { color: var(--gold); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-copy {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .footer-socials { display: flex; gap: 28px; }
+  .footer-socials a {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-socials a:hover { color: var(--gold); }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ── GRAIN OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9990;
+    opacity: 0.032;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+
+  /* ── MARQUEE TICKER ── */
+  .marquee-strip {
+    background: var(--gold);
+    padding: 14px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .marquee-track {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 28s linear infinite;
+  }
+  .marquee-track span {
+    font-family: var(--sans);
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--black);
+    padding: 0 48px;
+    flex-shrink: 0;
+  }
+  .marquee-track span.sep {
+    color: rgba(0,0,0,0.35);
+    padding: 0;
+    letter-spacing: 0;
+    font-size: 12px;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  body.theme-tan .marquee-track span { color: var(--white); }
+  body.theme-tan .marquee-track span.sep { color: rgba(255,255,255,0.3); }
+
+  /* ── ROOM PANELS (Makhno-style) ── */
+  .rooms {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 100vh);
+    position: relative;
+    overflow: hidden;
+  }
+  .room-panel {
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  body.theme-tan .room-panel {
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+  }
+  .room-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.52) contrast(1.1);
+    transition: filter 1s ease, transform 1.4s cubic-bezier(0.16,1,0.3,1);
+    transform-origin: center center;
+  }
+  .room-panel:hover .room-img {
+    filter: brightness(0.7) contrast(1.05);
+    transform: scale(1.04);
+  }
+  .room-vignette {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(5,5,5,0.88) 0%, rgba(5,5,5,0.08) 50%);
+    pointer-events: none;
+  }
+  /* White border box — fixed inside each panel, visible on hover */
+  .room-tracker {
+    position: absolute;
+    pointer-events: none;
+    inset: 28px;
+    border: 1px solid rgba(255,255,255,0);
+    transition: border-color 0.5s ease;
+    z-index: 3;
+  }
+  .room-panel:hover .room-tracker {
+    border-color: rgba(255,255,255,0.55);
+  }
+  /* Center dot */
+  .room-tracker-dot {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 7px; height: 7px;
+    background: rgba(255,255,255,0);
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+    transition: background 0.5s ease;
+  }
+  .room-panel:hover .room-tracker-dot {
+    background: rgba(255,255,255,0.8);
+  }
+  .room-info {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 56px 64px 60px;
+    z-index: 4;
+  }
+  .room-num {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    margin-bottom: 14px;
+    font-family: var(--sans);
+    text-transform: uppercase;
+  }
+  .room-name {
+    font-family: var(--serif);
+    font-size: clamp(52px, 7vw, 96px);
+    font-weight: 300;
+    color: #f5f2ec;
+    letter-spacing: 0.02em;
+    line-height: 0.95;
+    margin-bottom: 20px;
+    transition: letter-spacing 0.6s ease;
+  }
+  .room-panel:hover .room-name {
+    letter-spacing: 0.06em;
+  }
+  .room-sub {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(245,242,236,0.4);
+  }
+  .room-arrow {
+    position: absolute;
+    top: 48px; right: 64px;
+    font-size: 22px;
+    color: rgba(255,255,255,0.2);
+    transition: color 0.35s, transform 0.35s;
+    z-index: 4;
+  }
+  .room-panel:hover .room-arrow {
+    color: var(--gold);
+    transform: translate(5px, -5px);
+  }
+
+  /* ── LUXURY HORIZONTAL DIVIDER ── */
+  .gold-divider {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 56px;
+    margin: 0;
+    height: 1px;
+    position: relative;
+  }
+  .gold-divider::before {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    opacity: 0.3;
+  }
+  .gold-divider-gem {
+    width: 6px; height: 6px;
+    border: 1px solid var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+  .gold-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to left, transparent, var(--gold), transparent);
+    opacity: 0.3;
+  }
+
+  /* ── AWARDS TICKER ── */
+  .awards {
+    padding: 80px 56px;
+    background: var(--black);
+    border-top: 1px solid var(--border);
+  }
+  .awards-inner {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .awards-label-col .section-label { margin-bottom: 0; }
+  .awards-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+  .award-item {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    transition: border-color 0.3s;
+  }
+  .award-item:hover { border-color: var(--gold); }
+  .award-year {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .award-name {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .award-org {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── MOBILE */
+  @media (max-width: 900px) {
+    .rooms { grid-template-rows: repeat(3, 60vw); }
+    .room-panel { min-height: unset; }
+    .room-info { padding: 32px 28px 36px; }
+    .room-arrow { top: 28px; right: 28px; }
+    .room-tracker { inset: 16px; }
+    .awards-inner { grid-template-columns: 1fr; gap: 40px; }
+    .awards-list { grid-template-columns: 1fr 1fr; }
+    .marquee-track span { padding: 0 28px; }
+  }
+
+  /* MOBILE */
+  @media (max-width: 900px) {
+    nav { padding: 24px 28px; }
+    .nav-links { gap: 24px; }
+    .hero-content { padding: 0 28px 60px; }
+    .scroll-indicator { display: none; }
+    .about { grid-template-columns: 1fr; gap: 60px; padding: 80px 28px; }
+    .about-image { height: 400px; }
+    .about-stats { grid-template-columns: repeat(3, 1fr); }
+    .services { padding: 80px 28px; }
+    .services-header { flex-direction: column; gap: 24px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .projects { padding: 80px 28px; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card:first-child { grid-row: auto; }
+    .project-card:first-child .project-img { min-height: 400px; }
+    .philosophy { padding: 100px 28px; }
+    .philosophy-pillars { grid-template-columns: 1fr; }
+    .process { padding: 80px 28px; }
+    .process-steps { grid-template-columns: 1fr 1fr; gap: 48px; }
+    .process-steps::before { display: none; }
+    .contact { grid-template-columns: 1fr; gap: 60px; padding: 80px 28px; }
+    footer { padding: 60px 28px 32px; }
+    .footer-top { flex-direction: column; gap: 48px; }
+    .footer-nav { gap: 48px; }
+    .footer-bottom { flex-direction: column; gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">O<span>A</span>K</a>
+  <ul class="nav-links">
+    <li><a href="#about">Studio</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Architecture & Interior Design</p>
+    <h1 class="hero-title">Space<br>as <em>Art</em></h1>
+    <p class="hero-desc">OAK Studio crafts environments where structure and beauty are inseparable — architecture and interiors conceived as a single, coherent vision.</p>
+    <a href="#projects" class="hero-cta">
+      <span>View Projects</span>
+      <span class="hero-cta-arrow">→</span>
+    </a>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE TICKER -->
+<div class="marquee-strip">
+  <div class="marquee-track" id="marqueeTrack">
+    <span>Architecture</span><span class="sep">◆</span>
+    <span>Interior Design</span><span class="sep">◆</span>
+    <span>OAK Studio</span><span class="sep">◆</span>
+    <span>Chesterfield, Missouri</span><span class="sep">◆</span>
+    <span>Bespoke Environments</span><span class="sep">◆</span>
+    <span>Private Residences</span><span class="sep">◆</span>
+    <span>Hospitality Design</span><span class="sep">◆</span>
+    <span>Material Craft</span><span class="sep">◆</span>
+    <span>Architecture</span><span class="sep">◆</span>
+    <span>Interior Design</span><span class="sep">◆</span>
+    <span>OAK Studio</span><span class="sep">◆</span>
+    <span>Chesterfield, Missouri</span><span class="sep">◆</span>
+    <span>Bespoke Environments</span><span class="sep">◆</span>
+    <span>Private Residences</span><span class="sep">◆</span>
+    <span>Hospitality Design</span><span class="sep">◆</span>
+    <span>Material Craft</span><span class="sep">◆</span>
+  </div>
+</div>
+
+<!-- ROOM PANELS -->
+<section class="rooms" id="rooms">
+  <div class="room-panel" data-dest="#about">
+    <img class="room-img" src="https://images.unsplash.com/photo-1600607687939-ce8a6f349824?w=1800&q=85" alt="OAK Studio">
+    <div class="room-vignette"></div>
+    <div class="room-tracker"><div class="room-tracker-dot"></div></div>
+    <div class="room-info">
+      <div class="room-num">01</div>
+      <div class="room-name">Studio</div>
+      <div class="room-sub">Architecture</div>
+    </div>
+    <div class="room-arrow">↗</div>
+  </div>
+  <div class="room-panel" data-dest="#services">
+    <img class="room-img" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1800&q=85" alt="OAK Interiors">
+    <div class="room-vignette"></div>
+    <div class="room-tracker"><div class="room-tracker-dot"></div></div>
+    <div class="room-info">
+      <div class="room-num">02</div>
+      <div class="room-name">Interiors</div>
+      <div class="room-sub">Interior Design</div>
+    </div>
+    <div class="room-arrow">↗</div>
+  </div>
+  <div class="room-panel" data-dest="#projects">
+    <img class="room-img" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1800&q=85" alt="OAK Projects">
+    <div class="room-vignette"></div>
+    <div class="room-tracker"><div class="room-tracker-dot"></div></div>
+    <div class="room-info">
+      <div class="room-num">03</div>
+      <div class="room-name">Projects</div>
+      <div class="room-sub">Full Portfolio</div>
+    </div>
+    <div class="room-arrow">↗</div>
+  </div>
+</section>
+
+<!-- GOLD DIVIDER -->
+<div class="gold-divider" style="background:var(--charcoal);height:auto;padding-top:56px;padding-bottom:56px;">
+  <div class="gold-divider-gem"></div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-left">
+    <div class="section-label reveal">
+      <span class="section-num">01</span>
+      The Studio
+    </div>
+    <h2 class="about-heading reveal reveal-delay-1">
+      Built on<br><em>Precision</em><br>and Atmosphere
+    </h2>
+    <p class="about-text reveal reveal-delay-2">OAK is a multidisciplinary studio at the intersection of architecture and interior design. We believe that the most powerful spaces are those where every detail — from structural logic to the quality of light at dusk — is considered with equal intention.</p>
+    <p class="about-text reveal reveal-delay-2">Our work spans private residences, boutique hospitality, and cultural spaces. Each project is an original dialogue between client, context, and craft.</p>
+    <div class="about-stats reveal reveal-delay-3">
+      <div>
+        <div class="stat-num">12+</div>
+        <div class="stat-label">Years of Practice</div>
+      </div>
+      <div>
+        <div class="stat-num">84</div>
+        <div class="stat-label">Projects Completed</div>
+      </div>
+      <div>
+        <div class="stat-num">18</div>
+        <div class="stat-label">Design Awards</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-image reveal reveal-delay-2">
+    <img class="about-img-main" src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&q=80" alt="OAK Studio Architecture">
+    <img class="about-img-accent" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80" alt="OAK Interior Detail">
+    <div class="about-gold-line"></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="services-header">
+    <div>
+      <div class="section-label reveal">
+        <span class="section-num">02</span>
+        What We Do
+      </div>
+      <h2 class="services-heading reveal reveal-delay-1">
+        Two disciplines,<br>one <em>vision</em>
+      </h2>
+    </div>
+    <p class="services-intro reveal reveal-delay-2">We offer a seamless continuum from architectural concept to interior resolution — ensuring every space is conceived and delivered as a whole.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-item reveal">
+      <div class="service-num">01</div>
+      <h3 class="service-title">Architecture</h3>
+      <p class="service-desc">From concept to completion — we design buildings that respond to their site, their time, and the people who inhabit them.</p>
+      <ul class="service-list">
+        <li>Residential Architecture</li>
+        <li>Mixed-Use Development</li>
+        <li>Hospitality & Retail</li>
+        <li>Adaptive Reuse</li>
+        <li>Urban Design</li>
+      </ul>
+    </div>
+    <div class="service-item reveal reveal-delay-1">
+      <div class="service-num">02</div>
+      <h3 class="service-title">Interior Design</h3>
+      <p class="service-desc">Material, light, proportion, and mood — we design interiors that feel inevitable, as though they could not have been otherwise.</p>
+      <ul class="service-list">
+        <li>Residential Interiors</li>
+        <li>Hospitality Environments</li>
+        <li>Custom Furniture</li>
+        <li>Art & Object Curation</li>
+        <li>Lighting Design</li>
+      </ul>
+    </div>
+    <div class="service-item reveal reveal-delay-2">
+      <div class="service-num">03</div>
+      <h3 class="service-title">Full Project<br>Management</h3>
+      <p class="service-desc">End-to-end stewardship — from the first sketch through to the final fitting, ensuring vision and execution remain aligned.</p>
+      <ul class="service-list">
+        <li>Procurement</li>
+        <li>Contractor Liaison</li>
+        <li>Site Supervision</li>
+        <li>Budget Management</li>
+        <li>Styling & Handover</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="projects" id="projects">
+  <div class="projects-header">
+    <div class="section-label reveal">
+      <span class="section-num">03</span>
+      Selected Work
+    </div>
+    <h2 class="projects-heading reveal reveal-delay-1">
+      Projects that<br><em>endure</em>
+    </h2>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <img class="project-img" src="https://images.unsplash.com/photo-1600607687939-ce8a6f349824?w=900&q=80" alt="Oak House Project">
+      <div class="project-overlay">
+        <p class="project-category">Residential Architecture</p>
+        <h3 class="project-name">Oak House</h3>
+        <p class="project-location">Chesterfield, Missouri</p>
+      </div>
+      <div class="project-arrow">↗</div>
+    </div>
+    <div class="project-card reveal reveal-delay-1">
+      <img class="project-img" src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80" alt="Amber Kitchen Interior">
+      <div class="project-overlay">
+        <p class="project-category">Interior Design</p>
+        <h3 class="project-name">Amber Kitchen</h3>
+        <p class="project-location">St. Louis, Missouri</p>
+      </div>
+      <div class="project-arrow">↗</div>
+    </div>
+    <div class="project-card reveal reveal-delay-2">
+      <img class="project-img" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80" alt="Dusk Office Project">
+      <div class="project-overlay">
+        <p class="project-category">Commercial Interior</p>
+        <h3 class="project-name">Dusk Office</h3>
+        <p class="project-location">Kansas City, Missouri</p>
+      </div>
+      <div class="project-arrow">↗</div>
+    </div>
+  </div>
+  <div class="projects-cta reveal">
+    <a href="#" class="projects-link">View All Projects →</a>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy">
+  <div class="philosophy-inner">
+    <div class="section-label reveal" style="justify-content:center">
+      <span class="section-num">04</span>
+      Our Philosophy
+    </div>
+    <blockquote class="philosophy-quote reveal reveal-delay-1">
+      "We do not design spaces — we design <em>experiences of time</em>, light, and inhabitation."
+    </blockquote>
+    <p class="philosophy-author reveal reveal-delay-2">OAK Studio Manifesto</p>
+  </div>
+  <div class="philosophy-pillars">
+    <div class="pillar reveal">
+      <svg class="pillar-icon" viewBox="0 0 32 32" fill="none">
+        <rect x="4" y="4" width="24" height="24" stroke="#b8965a" stroke-width="0.75"/>
+        <line x1="4" y1="16" x2="28" y2="16" stroke="#b8965a" stroke-width="0.75" stroke-dasharray="3 3"/>
+        <line x1="16" y1="4" x2="16" y2="28" stroke="#b8965a" stroke-width="0.75" stroke-dasharray="3 3"/>
+      </svg>
+      <h3 class="pillar-title">Contextual Integrity</h3>
+      <p class="pillar-text">Every project is inseparable from its place. We study site, climate, culture, and material tradition before committing a single line to paper.</p>
+    </div>
+    <div class="pillar reveal reveal-delay-1">
+      <svg class="pillar-icon" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="10" stroke="#b8965a" stroke-width="0.75"/>
+        <circle cx="16" cy="16" r="4" stroke="#b8965a" stroke-width="0.75"/>
+        <line x1="16" y1="6" x2="16" y2="12" stroke="#b8965a" stroke-width="0.75"/>
+        <line x1="16" y1="20" x2="16" y2="26" stroke="#b8965a" stroke-width="0.75"/>
+        <line x1="6" y1="16" x2="12" y2="16" stroke="#b8965a" stroke-width="0.75"/>
+        <line x1="20" y1="16" x2="26" y2="16" stroke="#b8965a" stroke-width="0.75"/>
+      </svg>
+      <h3 class="pillar-title">Materiality First</h3>
+      <p class="pillar-text">Materials are not finishes — they are the substance of experience. We select every surface for how it ages, how it sounds, how it feels in changing light.</p>
+    </div>
+    <div class="pillar reveal reveal-delay-2">
+      <svg class="pillar-icon" viewBox="0 0 32 32" fill="none">
+        <polyline points="4,28 10,14 16,20 22,8 28,4" stroke="#b8965a" stroke-width="0.75" fill="none"/>
+        <circle cx="4" cy="28" r="2" stroke="#b8965a" stroke-width="0.75"/>
+        <circle cx="28" cy="4" r="2" stroke="#b8965a" stroke-width="0.75"/>
+      </svg>
+      <h3 class="pillar-title">Long-Term Thinking</h3>
+      <p class="pillar-text">We design for decades. Every decision is weighed not only for its immediate beauty but for how it will be lived in, and cared for, over a lifetime.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="section-label reveal">
+    <span class="section-num">05</span>
+    How We Work
+  </div>
+  <h2 class="process-heading reveal reveal-delay-1">
+    A process built<br>on <em>trust</em>
+  </h2>
+  <div class="process-steps">
+    <div class="process-step reveal">
+      <div class="step-dot"></div>
+      <div class="step-num">Step 01</div>
+      <h3 class="step-title">Discovery & Vision</h3>
+      <p class="step-desc">We begin with deep listening — understanding how you live, what you value, and what kind of space will serve you best.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-1">
+      <div class="step-dot"></div>
+      <div class="step-num">Step 02</div>
+      <h3 class="step-title">Concept & Design</h3>
+      <p class="step-desc">We develop a concept that responds to place, program, and person — tested through drawing, model, and material study.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-2">
+      <div class="step-dot"></div>
+      <div class="step-num">Step 03</div>
+      <h3 class="step-title">Development & Coordination</h3>
+      <p class="step-desc">Every detail is resolved — technical, material, and regulatory — coordinating all consultants into a unified vision.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-3">
+      <div class="step-dot"></div>
+      <div class="step-num">Step 04</div>
+      <h3 class="step-title">Delivery & Handover</h3>
+      <p class="step-desc">We remain on-site throughout construction, ensuring the built work reflects the intent of the design in every detail.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-left">
+    <div class="section-label reveal">
+      <span class="section-num">06</span>
+      Get in Touch
+    </div>
+    <h2 class="contact-heading reveal reveal-delay-1">
+      Let's build<br>something<br><em>remarkable</em>
+    </h2>
+    <p class="contact-text reveal reveal-delay-2">Every great project begins with a conversation. Tell us about your vision and we'll explore how OAK can bring it to life.</p>
+    <div class="contact-details reveal reveal-delay-3">
+      <div>
+        <div class="contact-item-label">Email</div>
+        <div class="contact-item-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fe969b929291be919f958d8a8b9a9791d09d9193">[email&#160;protected]</a></div>
+      </div>
+      <div>
+        <div class="contact-item-label">Studio</div>
+        <div class="contact-item-value">Chesterfield, Missouri</div>
+      </div>
+      <div>
+        <div class="contact-item-label">Phone</div>
+        <div class="contact-item-value">+1 (314) 000 0000</div>
+      </div>
+    </div>
+  </div>
+  <div class="contact-form reveal reveal-delay-2">
+    <div class="form-group">
+      <label class="form-label">Your Name</label>
+      <input class="form-input" type="text" placeholder="Full name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="form-input" type="email" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Project Type</label>
+      <input class="form-input" type="text" placeholder="Architecture / Interior / Both">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tell Us About Your Project</label>
+      <textarea class="form-textarea" placeholder="Brief description, location, timeline..."></textarea>
+    </div>
+    <button class="form-submit"><span>Send Inquiry →</span></button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">O<span>A</span>K</div>
+      <div class="footer-tagline">Architecture & Interior Design</div>
+    </div>
+    <div class="footer-nav">
+      <div class="footer-nav-col">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#">Team</a></li>
+        </ul>
+      </div>
+      <div class="footer-nav-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Behance</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 OAK Studio. All rights reserved.</p>
+    <div class="footer-socials">
+      <a href="#">Instagram</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Behance</a>
+    </div>
+  </div>
+</footer>
+
+<!-- THEME TOGGLE -->
+<div class="theme-toggle" id="themeToggle">
+  <button class="theme-btn active" id="btnDark" onclick="setTheme('dark')"><span>Dark</span></button>
+  <button class="theme-btn" id="btnTan" onclick="setTheme('tan')"><span>Tan</span></button>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  function setTheme(t) {
+    const body = document.body;
+    const btnDark = document.getElementById('btnDark');
+    const btnTan = document.getElementById('btnTan');
+    if (t === 'tan') {
+      body.classList.add('theme-tan');
+      btnTan.classList.add('active');
+      btnDark.classList.remove('active');
+    } else {
+      body.classList.remove('theme-tan');
+      btnDark.classList.add('active');
+      btnTan.classList.remove('active');
+    }
+  }
+
+  // Room panel click navigation
+  document.querySelectorAll('.room-panel').forEach((panel) => {
+    panel.addEventListener('click', () => {
+      const dest = panel.getAttribute('data-dest');
+      if (dest) document.querySelector(dest)?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // ── CINEMATIC FOG INTRO ──
+  // SVG feTurbulence + feDisplacementMap dissolve, like Makhno's smoke wipe
+  const fogVeil = document.createElement('div');
+  fogVeil.id = 'fog-veil';
+  fogVeil.innerHTML = `
+    <svg id="fog-svg" xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0">
+      <defs>
+        <filter id="fog-filter" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+          <feTurbulence id="fog-turb" type="fractalNoise" baseFrequency="0.012 0.008"
+            numOctaves="4" seed="8" result="noise"/>
+          <feDisplacementMap id="fog-disp" in="SourceGraphic" in2="noise"
+            scale="0" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+          <feComposite in="displaced" in2="SourceGraphic" operator="in"/>
+        </filter>
+      </defs>
+    </svg>
+    <div id="fog-layer"></div>
+  `;
+  fogVeil.style.cssText = `
+    position:fixed;inset:0;z-index:99999;pointer-events:none;
+    background:#c8ab85;overflow:hidden;
+  `;
+  document.body.appendChild(fogVeil);
+
+  const fogLayer = document.getElementById('fog-layer');
+  const fogTurb  = document.getElementById('fog-turb');
+  const fogDisp  = document.getElementById('fog-disp');
+
+  fogLayer.style.cssText = `
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse at 40% 50%, #dfc49a 0%, #c8ab85 45%, #a8885f 100%);
+    filter:url(#fog-filter);
+    will-change:transform,opacity;
+  `;
+
+  // Phase 1 — hold for 200ms then animate
+  let start = null;
+  const DURATION = 2200; // total ms
+
+  function animateFog(ts) {
+    if (!start) start = ts;
+    const t = Math.min((ts - start) / DURATION, 1);
+
+    // ease: slow start, fast finish
+    const ease = t < 0.5
+      ? 4 * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    // turbulence frequency drifts upward (fog shredding apart)
+    const bfX = 0.012 + ease * 0.055;
+    const bfY = 0.008 + ease * 0.04;
+    fogTurb.setAttribute('baseFrequency', `${bfX.toFixed(4)} ${bfY.toFixed(4)}`);
+
+    // displacement grows then collapses (fog blows sideways then tears)
+    const dispPeak = Math.sin(ease * Math.PI) * 340;
+    fogDisp.setAttribute('scale', dispPeak.toFixed(1));
+
+    // overall layer fades out in second half
+    const opacity = ease < 0.45 ? 1 : 1 - ((ease - 0.45) / 0.55);
+    fogLayer.style.opacity = Math.max(0, opacity).toFixed(3);
+
+    // slight upward drift
+    fogLayer.style.transform = `translateY(${-ease * 18}px)`;
+
+    if (t < 1) {
+      requestAnimationFrame(animateFog);
+    } else {
+      fogVeil.remove();
+    }
+  }
+
+  setTimeout(() => requestAnimationFrame(animateFog), 200);
+
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+  document.querySelectorAll('a, button, .project-card, .service-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '14px';
+      cursor.style.height = '14px';
+      ring.style.width = '56px';
+      ring.style.height = '56px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '8px';
+      cursor.style.height = '8px';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // Parallax hero
+  window.addEven
